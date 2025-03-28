@@ -1,0 +1,29 @@
+import os
+import requests
+from flask import Flask, request, send_file
+
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+app = Flask(__name__)
+
+@app.route('/file/<file_id>')
+def serve_file(file_id):
+    # Get the file path from Telegram API
+    file_info_url = f"https://api.telegram.org/bot{TOKEN}/getFile?file_id={file_id}"
+    file_info = requests.get(file_info_url).json()
+
+    if "result" not in file_info:
+        return "Invalid file ID", 400
+
+    file_path = file_info["result"]["file_path"]
+    file_url = f"https://api.telegram.org/file/bot{TOKEN}/{file_path}"
+
+    # Download the file from Telegram
+    response = requests.get(file_url, stream=True)
+    filename = file_path.split("/")[-1]
+
+    # Serve the file without exposing the bot token
+    return send_file(response.raw, download_name=filename, as_attachment=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+	
