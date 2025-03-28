@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Flask, request, send_file
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TOKEN = os.getenv("8114644328:AAFn7fbVj6J6HTcjShG5ySpnOZ-u_S6wiSY")
 app = Flask(__name__)
 
 @app.route('/file/<file_id>')
